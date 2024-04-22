@@ -58,12 +58,10 @@ sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG
 
 #Sockstress defense
 sudo iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m recent --set
-sudo iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m recent --update --seconds 2 --
-hitcount 4 -j DROP
+sudo iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m recent --update --seconds 2 --hitcount 4 -j DROP
 
 #Maybe stop spoofing
-sudo iptables -t mangle -I PREROUTING -p tcp -m tcp --dport 80 -m state --state NEW -m tcpmss !
---mss 536:65535 -j DROP
+sudo iptables -t mangle -I PREROUTING -p tcp -m tcp --dport 80 -m state --state NEW -m tcpmss ! --mss 536:65535 -j DROP
 
 #Defend against Sloloris
 sudo iptables -A INPUT -p tcp --syn --dport 80 -m connlimit --connlimit-above 20 -j DROP
