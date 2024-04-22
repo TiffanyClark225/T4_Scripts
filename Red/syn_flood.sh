@@ -2,7 +2,8 @@
 
 echo "Starting SlowHTTPTest to simulate a slow HTTP attack ..."
 
-slowhttptest -c 1000 -H -g -o my_stats -i 10 -r 15 -t GET -u server/1.html -x 24 -p 1 
+slowhttptest -c 1000 -H -g -o my_stats -i 10 -r 15 -t GET -u http://server/1.html -x 24 -p 1
+
 
 echo "SlowHTTPTest completed. Check my_stats file for output"
 
