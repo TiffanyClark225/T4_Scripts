@@ -25,3 +25,7 @@ echo "Installing slowhttptest..."
 sudo apt-get -y install slowhttptest
 echo "slowhttpest installed"
 
+echo "Installing tcdump ..."
+sudo apt-get -y install tcdump
+echo "tcdump installed"
+
