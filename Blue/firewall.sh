@@ -2,7 +2,8 @@
 
 echo "Firewall Starting..."
 
-ETH="eth0,eth2"
+server_ETH="eth1"
+gateway_ETH="eth2"
 
 
 #Clear all rules 
@@ -11,7 +12,7 @@ $sudo iptables --flush
 #Ignores all udp and icmp traffic
 $sudo iptables -A INPUT -i eth4 -p udp -j DROP
 $sudo iptables -A INPUT -i eth2 -p udp -j DROP
-$sudo iptables -A INPUT -i $ETH -p icmp -j DROP
+$sudo iptables -A INPUT -i $server_ETH -p icmp -j DROP
 $sudo iptables -A OUTPUT -o eth4 -p udp -j DROP
 $sudo iptables -A OUTPUT -o eth2 -p udp -j DROP
 #$sudo iptables -A OUTPUT -o $ETH -p udp -j DROP
@@ -43,7 +44,7 @@ $sudo iptables -A OUTPUT -p UDP -m length --length 58 -j DROP
 
 #Block packets with invalid tcp flags
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
-$sduo iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
+$sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP
 $sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,RST FIN,RST -j DROP
@@ -81,48 +82,76 @@ $sudo iptables -A INPUT -p tcp --dport 443 -m limit --limit 2/s -j ACCEPT
 
 
 #Accepts new tcp connections
-$sudo iptables -A INPUT -s client1 -i $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
-$sudo iptables -A INPUT -s client1 -i $ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
-$sudo iptables -A INPUT -s client1 -i $ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
-$sudo iptables -A OUTPUT -d client1 -o $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
-$sudo iptables -A OUTPUT -d client1 -o $ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
-$sudo iptables -A OUTPUT -d client1 -o $ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
-$sudo iptables -A INPUT -s client2 -i $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
-$sudo iptables -A INPUT -s client2 -i $ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
-$sudo iptables -A INPUT -s client2 -i $ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
-$sudo iptables -A OUTPUT -d client2 -o $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
-$sudo iptables -A OUTPUT -d client2 -o $ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT 
+$sudo iptables -A INPUT -s client1 -i $server_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A INPUT -s client1 -i $server_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A INPUT -s client1 -i $server_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A OUTPUT -d client1 -o $server_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A OUTPUT -d client1 -o $server_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A OUTPUT -d client1 -o $server_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A INPUT -s client2 -i $server_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A INPUT -s client2 -i $server_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A INPUT -s client2 -i $server_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A OUTPUT -d client2 -o $server_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A OUTPUT -d client2 -o $server_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT 
+
+$sudo iptables -A INPUT -s client1 -i $gateway_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A INPUT -s client1 -i $gateway_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A INPUT -s client1 -i $gateway_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A OUTPUT -d client1 -o $gateway_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A OUTPUT -d client1 -o $gateway_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A OUTPUT -d client1 -o $gateway_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A INPUT -s client2 -i $gateway_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A INPUT -s client2 -i $gateway_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A INPUT -s client2 -i $gateway_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A OUTPUT -d client2 -o $gateway_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A OUTPUT -d client2 -o $gateway_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT 
 
 
-$sudo iptables -A OUTPUT -d client2 -o $ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
-$sudo iptables -A INPUT -s client3 -i $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
-$sudo iptables -A INPUT -s client3 -i $ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
-$sudo iptables -A INPUT -s client3 -i $ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
-$sudo iptables -A OUTPUT -d client3 -o $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
-$sudo iptables -A OUTPUT -d client3 -o $ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
-$sudo iptables -A OUTPUT -d client3 -o $ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
-$sudo iptables -A INPUT -s server -i $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
-$sudo iptables -A INPUT -s server -i $ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
-$sudo iptables -A INPUT -s server -i $ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
-$sudo iptables -A OUTPUT -d server -o $ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
-$sudo iptables -A OUTPUT -d server -o $ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
-$sudo iptables -A OUTPUT -d server -o $ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A OUTPUT -d client2 -o $server_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A INPUT -s client3 -i $server_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A INPUT -s client3 -i $server_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A INPUT -s client3 -i $server_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A OUTPUT -d client3 -o $server_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A OUTPUT -d client3 -o $server_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A OUTPUT -d client3 -o $server_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A INPUT -s server -i $server_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A INPUT -s server -i $server_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A INPUT -s server -i $server_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A OUTPUT -d server -o $server_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A OUTPUT -d server -o $server_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A OUTPUT -d server -o $server_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
 
+$sudo iptables -A OUTPUT -d client2 -o $gateway_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A INPUT -s client3 -i $gateway_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A INPUT -s client3 -i $gateway_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A INPUT -s client3 -i $gateway_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A OUTPUT -d client3 -o $gateway_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A OUTPUT -d client3 -o $gateway_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A OUTPUT -d client3 -o $gateway_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A INPUT -s server -i $gateway_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A INPUT -s server -i $gateway_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A INPUT -s server -i $gateway_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
+$sudo iptables -A OUTPUT -d server -o $gateway_ETH -m state --state NEW -p tcp --dport 22 -j ACCEPT
+$sudo iptables -A OUTPUT -d server -o $gateway_ETH -m state --state NEW -p tcp --dport 80 -j ACCEPT
+$sudo iptables -A OUTPUT -d server -o $gateway_ETH -m state --state NEW -p tcp --dport 443 -j ACCEPT
 
 #Allows traffic to pass from previously accepted connection
-$sudo iptables -A INPUT -s client1 -i $ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
-$sudo iptables -A OUTPUT -d client1 -o $ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
-$sudo iptables -A INPUT -s client2 -i $ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
-$sudo iptables -A OUTPUT -d client2 -o $ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
-$sudo iptables -A INPUT -s client3 -i $ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
-$sudo iptables -A OUTPUT -d client3 -o $ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
-$sudo iptables -A INPUT -s server -i $ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
-$sudo iptables -A OUTPUT -d server -o $ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
+$sudo iptables -A INPUT -s client1 -i $gateway_ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
+$sudo iptables -A OUTPUT -d client1 -o $gateway_ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
+$sudo iptables -A INPUT -s client2 -i $gateway_ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
+$sudo iptables -A OUTPUT -d client2 -o $gateway_ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
+$sudo iptables -A INPUT -s client3 -i $gateway_ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
+$sudo iptables -A OUTPUT -d client3 -o $gateway_ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
+$sudo iptables -A INPUT -s server -i $gateway_ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
+$sudo iptables -A OUTPUT -d server -o $gateway_ETH -m state --state RELATED,ESTABLISHED -j ACCEPT
 
 
 #Passively ignore all other traffic
-$sudo iptables -A INPUT -i $ETH -j DROP
-$sudo iptables -A OUTPUT -o $ETH -j DROP
+$sudo iptables -A INPUT -i $server_ETH -j DROP
+$sudo iptables -A OUTPUT -o $server_ETH -j DROP
+
+$sudo iptables -A INPUT -i $gateway_ETH -j DROP
+$sudo iptables -A OUTPUT -o $gateway_ETH -j DROP
 
 
 echo "Firewall Active!!!" 
