@@ -32,3 +32,7 @@ echo "tcdump installed"
 echo "Installing nmap ..."
 sudo apt-get -y install nmap
 echo "nmap installed"
+
+echo "Installing telnet ..."
+sudo apt-get -y install telnet
+echo "telnet installed"
