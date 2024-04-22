@@ -29,3 +29,6 @@ echo "Installing tcdump ..."
 sudo apt-get -y install tcdump
 echo "tcdump installed"
 
+echo "Installing nmap ..."
+sudo apt-get -y install nmap
+echo "nmap installed"
