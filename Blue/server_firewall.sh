@@ -39,7 +39,7 @@ sudo iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
 sudo iptables -A INPUT -s gateway -j DROP
 
 # Block SYN flood attack
-sudo iptables -A INPUT -p tcp -m state --state NEW -m recent --update --seconds 60 --hitcount 20 -j DROP
+sudo iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
 
 # Block new packets that are not SYN
 sudo iptables -t mangle -A PREROUTING -p tcp ! --syn -m state --state NEW -j DROP
