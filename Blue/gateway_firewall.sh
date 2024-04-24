@@ -19,6 +19,7 @@ sudo iptables -A FORWARD -p tcp ! --syn -m state --state NEW -j DROP
 # Block UDP to server
 sudo iptables -A FORWARD -p udp  -j DROP
 
+# Block ICMP to server
 sudo iptables -A FORWARD -p icmp  -j DROP
 
 echo "Firewall Active"
