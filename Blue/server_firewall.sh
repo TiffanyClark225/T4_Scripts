@@ -61,8 +61,8 @@ sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,FIN,PSH,URG -j 
 sudo iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP
 
 # Prevent Sockstress attack
-sudo iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m recet --set
-sudo iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m recent --update -seconds 2 --hitcount 4 -j DROP
+sudo iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m recent --set
+sudo iptables -A INPUT -p tcp --dport 80 -m state --state NEW -m recent --update --seconds 2 --hitcount 4 -j DROP
 
 # Limit MSS
 sudo iptables -t mangle -A PREROUTING -p tcp -m state --state NEW -m tcpmss ! --mss 536:65535 -j DROP
@@ -85,6 +85,5 @@ sudo iptables -i $GATEWAY_IF -A INPUT -m state --state NEW -p tcp --dport 443 -j
 
 # Ignore all other traffic
 sudo iptables -i $GATEWAY_IF -A INPUT -j DROP
-sudo iptables -i $GATEWAY_IF -A OUTPUT -j DROP
 
 echo "Firewall Active"
