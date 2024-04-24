@@ -16,4 +16,9 @@ sudo iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
 # Block SYN flood attack to server
 sudo iptables -A FORWARD -p tcp ! --syn -m state --state NEW -j DROP
 
+# Block UDP to server
+sudo iptables -A FORWARD -p udp  -j DROP
+
+sudo iptables -A FORWARD -p icmp  -j DROP
+
 echo "Firewall Active"
